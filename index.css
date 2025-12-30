@@ -1,0 +1,62 @@
+:root {
+  --transition-speed: 0.5s;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000; /* Dark background for premium feel before load */
+  font-family: 'Inter', sans-serif;
+}
+
+#banner-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+  z-index: 10;
+  transition: opacity var(--transition-speed) ease-in-out;
+}
+
+#banner-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+#banner-image:hover {
+  transform: scale(1.02);
+}
+
+#app-container {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
