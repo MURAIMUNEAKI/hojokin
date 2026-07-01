@@ -1,0 +1,44 @@
+# ===================================================================
+# 補助金AIエージェント (J-Grants検索)  .htaccess
+# ===================================================================
+# 以前は「リファラーが muraimuneaki.github.io の時だけ index.html を許可」
+# という制限を入れていたが、埋め込み元ドメインの変更・ブラウザの
+# Referrerポリシー・直リンクで全アクセスがブロックされる原因になるため撤去。
+# （保護を戻したい場合は末尾のコメント参照）
+
+# ディレクトリ直アクセス時は index.html を表示
+DirectoryIndex index.html
+
+# .env などの秘匿ファイルは常に保護
+<FilesMatch "^\.env">
+    Require all denied
+</FilesMatch>
+
+# -------------------------------------------------------------------
+# キャッシュ制御：HTML/JS/CSS は毎回サーバーへ確認しに行かせる
+#   （長期キャッシュで古い script.js が居座り「途中から404」になる事故を防止。
+#    ETag/Last-Modified による再検証で、変更が無ければ 304 で軽量に済む）
+# -------------------------------------------------------------------
+<IfModule mod_headers.c>
+    <FilesMatch "\.(html|htm|js|css)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# -------------------------------------------------------------------
+# ▼ もしリファラー制限を復活させたい場合は、下のコメントを外し、
+#   muraimuneaki\.github\.io の部分を実際の埋め込み元ドメインに変える。
+#   （複数許可する場合は | で区切る: (siteA\.com|siteB\.github\.io) ）
+# -------------------------------------------------------------------
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     # index.html / ディレクトリ以外（CSS/JS/PHP等）は制限しない
+#     RewriteCond %{REQUEST_URI} !(/index\.html|/)$ [NC]
+#     RewriteRule .* - [L]
+#     # 許可ドメインからのリファラーなら通す
+#     RewriteCond %{HTTP_REFERER} muraimuneaki\.github\.io [NC]
+#     RewriteRule .* - [L]
+#     # それ以外は拒否
+#     RewriteRule .* - [F,L]
+# </IfModule>
+# ErrorDocument 403 "このコンテンツは指定されたページからのみアクセス可能です。"

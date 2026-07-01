@@ -1,34 +1,145 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- SEO Meta Tags -->
     <title>補助金AIエージェント</title>
-    <meta name="description" content="あなたに会った補助金を見つけます。">
-
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="index.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
+
 <body>
+    <div class="bg-gradient"></div>
+    <div class="app-container">
+        <header class="glass-header">
+            <div class="logo">
+                <ion-icon name="search-outline"></ion-icon>
+                <h1>補助金AIエージェント</h1>
+            </div>
+            <!-- API Key input removed -->
+        </header>
 
-    <!-- Banner Selection -->
-    <div id="banner-container">
-        <img src="hojo.jpg" alt="補助金バナー" id="banner-image">
+        <main>
+            <section class="search-section glass-card">
+                <div class="search-main">
+                    <!-- Quick Tags -->
+                    <div class="quick-tags">
+                        <button class="tag-btn" data-keyword="AI">AI</button>
+                        <button class="tag-btn" data-keyword="DX">DX</button>
+                        <button class="tag-btn" data-keyword="観光">観光</button>
+                        <button class="tag-btn" data-keyword="省エネ">省エネ</button>
+                        <button class="tag-btn" data-keyword="人材">人材</button>
+                        <button class="tag-btn" data-keyword="事業">事業</button>
+                        <button class="tag-btn" data-keyword="子育て">子育て</button>
+                        <button class="tag-btn" data-keyword="農業">農業</button>
+                        <button class="tag-btn" data-keyword="投資">投資</button>
+                        <button class="tag-btn" data-keyword="住宅">住宅</button>
+                        <button class="tag-btn" data-keyword="介護">介護</button>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <ion-icon name="search"></ion-icon>
+                        <input type="text" id="keyword" placeholder="キーワードで検索 (例: DX, 省エネ, 観光)" required>
+                        <button id="search-btn" class="primary-btn inline-search-btn">
+                            <span>検索</span>
+                            <ion-icon name="arrow-forward"></ion-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filters-grid">
+                    <div class="filter-item">
+                        <label>募集状況</label>
+                        <select id="acceptance">
+                            <option value="1">募集中のみ</option>
+                            <option value="0">すべて</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>並び順</label>
+                        <select id="sort">
+                            <option value="created_date">作成日順</option>
+                            <option value="acceptance_start_datetime">募集開始日順</option>
+                            <option value="acceptance_end_datetime">募集終了日順</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>順序</label>
+                        <select id="order">
+                            <option value="DESC">降順 (新しい順)</option>
+                            <option value="ASC">昇順 (古い順)</option>
+                        </select>
+                    </div>
+                    <button id="toggle-advanced" class="text-btn">詳細条件を表示</button>
+                </div>
+
+                <div id="advanced-filters" class="advanced-filters hidden">
+                    <div class="filter-item">
+                        <label>対象地域</label>
+                        <select id="target_area">
+                            <option value="">指定なし</option>
+                            <option value="全国">全国</option>
+                            <option value="東京都">東京都</option>
+                            <option value="大阪府">大阪府</option>
+                            <option value="愛知県">愛知県</option>
+                            <option value="福岡県">福岡県</option>
+                            <!-- More areas can be added -->
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>従業員数</label>
+                        <select id="employees">
+                            <option value="">指定なし</option>
+                            <option value="5名以下">5名以下</option>
+                            <option value="20名以下">20名以下</option>
+                            <option value="21名以上">21名以上</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section id="results-count" class="results-info hidden">
+                <h2>検索結果: <span id="count-value">0</span> 件</h2>
+            </section>
+
+            <section id="results-grid" class="results-grid">
+                <!-- Cards will be injected here -->
+            </section>
+
+            <div id="loader" class="loader hidden">
+                <div class="spinner"></div>
+                <p>データを取得中...</p>
+            </div>
+
+            <div id="error-message" class="error-msg hidden">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span id="error-text">エラーが発生しました</span>
+            </div>
+        </main>
+
+        <footer class="glass-footer">
+            <p>Copyright 2025 MuraiMuneaki All rights reserved.</p>
+        </footer>
     </div>
 
-    <!-- Main Content Area -->
-    <div id="app-container">
-        <!-- Iframe will be injected here on click -->
-    </div>
+    <!-- Detail Modal -->
+    <dialog id="detail-modal" class="glass-modal">
+        <div class="modal-content">
+            <button id="close-modal" class="close-btn"><ion-icon name="close"></ion-icon></button>
+            <div id="modal-body">
+                <!-- Detail content -->
+            </div>
+        </div>
+    </dialog>
 
-    <!-- Scripts -->
     <script src="script.js"></script>
 </body>
+
 </html>
