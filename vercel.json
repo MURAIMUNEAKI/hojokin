@@ -1,0 +1,6 @@
+{
+  "routes": [
+    { "src": "/proxy.php", "dest": "/api/proxy" },
+    { "handle": "filesystem" }
+  ]
+}
